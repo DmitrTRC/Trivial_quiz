@@ -3,6 +3,8 @@ import requests
 import random
 import json
 from types import SimpleNamespace
+from html.parser import HTMLParser
+import html
 
 
 class Question:
@@ -11,14 +13,16 @@ class Question:
         self.__dict__.update(entries)
 
     def show(self):
-        print(getattr(self, 'question'), end='\n\n')
+        parser = HTMLParser()
+        print(html.unescape(getattr(self, 'question')), end='\n\n')
         time.sleep(1)
         random.shuffle(answers := [getattr(self, 'correct_answer')] + getattr(self, 'incorrect_answers'))
         for index, answer in enumerate(answers, 1):
-            print(f'\n{index}. {answer}')
+            print(f'\n{index}. {html.unescape(answer)}')
         print()
+        return len(answers), answers.index(self.get_correct_answer()) + 1
 
-    def get_answer(self):
+    def get_correct_answer(self):
         return getattr(self, 'correct_answer')
 
     def __str__(self):
@@ -40,28 +44,26 @@ def load_questions(amount=5, category=None, difficulty=None):
 
 
 def main():
+    difficulty = ['easy', 'medium', 'hard']
     wins = 0
     name = input('Enter your name => ')
     questions_num = int(input('Enter how many questions do you like to get => '))
-    complexity = int(input('Enter the difficulty from 1 to 3 (easy/medium/hard) => '))
-    # for _ in range(questions_num):
-    #     question = load_question(complexity=complexity)
-    #     print(f'DIFFICULTY : {question.get_complexity(complexity)}')
-    #     question.show()
-    #     while True:
-    #         user_answer = int(input('Enter your answer => '))
-    #         if user_answer in range(1, len(question.answers) + 1):
-    #             break
-    #
-    #     if question.answers[user_answer - 1] == question.get_answer():
-    #         print(f'\n{name} fine! Correct answer.\n')
-    #         complexity += 1 if complexity < 3 else -3
-    #         wins += 1
-    #     else:
-    #         print(f'\n{name} OOPS! You FAIL.\n')
-    #         if complexity > 1: complexity -= 1
-    #
-    # print(f'{name} - You win {wins} points and that is {round(wins / questions_num * 100)} %')
+    cur_difficulty = difficulty[int(input('Enter the difficulty from 1 to 3 (easy/medium/hard) => ')) - 1]
+    questions = load_questions(difficulty=cur_difficulty, amount=questions_num)
+    for question in questions:
+        ans_count, correct_number = question.show()
+        while True:
+            user_answer = int(input('Enter your answer => '))
+            if user_answer in range(1, ans_count + 1):
+                break
+
+        if user_answer == correct_number:
+            print(f'\n{name} fine! Correct answer.\n')
+            wins += 1
+        else:
+            print(f'\n{name} OOPS! You FAIL.\n')
+
+    print(f'{name} - You win {wins} points and that is {round(wins / questions_num * 100)} %')
 
 
 if __name__ == '__main__':
