@@ -32,6 +32,10 @@ class Question:
         return str(self.__dict__)
 
 
+class Game:
+    pass
+
+
 def load_questions(amount=5, category=None, difficulty=None):
     api_url = 'https://opentdb.com/api.php?amount=10&category=9'
     params = {
@@ -51,7 +55,7 @@ def main():
     wins = 0
     name = input('Enter your name => ')
     questions_num = int(input('Enter how many questions do you like to get => '))
-    cur_difficulty = difficulty[int(input('Enter the difficulty from 1 to 3 (easy/medium/hard) => ')) - 1]
+    cur_difficulty = difficulty[int(input('Enter the difficulty from 1 to 3 (easy/medium/hard ) => ')) - 1]
     if input('Do you need to translate ? y/n ').lower() == 'y':
         need_translate = True
     else:
