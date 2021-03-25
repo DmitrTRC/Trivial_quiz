@@ -13,8 +13,7 @@ class Question:
         self.__dict__.update(entries)
 
     def show(self):
-        parser = HTMLParser()
-        print(html.unescape(getattr(self, 'question')), end='\n\n')
+        print('\n', html.unescape(getattr(self, 'question')), end='\n\n')
         time.sleep(1)
         random.shuffle(answers := [getattr(self, 'correct_answer')] + getattr(self, 'incorrect_answers'))
         for index, answer in enumerate(answers, 1):
