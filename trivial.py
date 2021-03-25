@@ -1,61 +1,49 @@
 import time
 import requests
 import random
+import json
+from types import SimpleNamespace
 
 
 class Question:
 
-    def __init__(self, category, q_type, difficulty, quest, ans_arr, ans):
-        self.category = category
-        self.q_type = q_type
-        self.difficulty = difficulty
-        self.question = quest
-        self.incorrect_answers = ans_arr
-        self._answer = ans
+    def __init__(self, **entries):
+        self.__dict__.update(entries)
 
     def show(self):
-        print(self.question, end='\n\n')
+        print(getattr(self, 'question'), end='\n\n')
         time.sleep(1)
-        for index, answer in enumerate(self.answers, 1):
+        random.shuffle(answers := [getattr(self, 'correct_answer')] + getattr(self, 'incorrect_answers'))
+        for index, answer in enumerate(answers, 1):
             print(f'\n{index}. {answer}')
         print()
 
     def get_answer(self):
-        return self._answer
+        return getattr(self, 'correct_answer')
 
-    def get_complexity(self, num):
-        return self.difficulty
+    def __str__(self):
+        return str(self.__dict__)
 
 
-def load_questions(complexity=None):
+def load_questions(amount=5, category=None, difficulty=None):
     api_url = 'https://opentdb.com/api.php?amount=10&category=9'
     params = {
-        'amount': 5,
-        'category': 9
+        'amount': amount,
+        'category': category,
+        'difficulty': difficulty,
     }
     response = requests.get(api_url, params=params)
     qa_base = []
     for record in response.json().get('results'):
-        qa_base.append(Question(
-            record.get('category'),
-            record.get('type'),
-            record.get('difficulty'),
-            record.get('question'),
-            record.get('incorrect_answers'),
-            record.get('correct_answer'),
-        ))
-
-    # random.shuffle(answers)
-
-    # return Question(response.get('question'), answers, answer)
+        qa_base.append(Question(**record))
+    return qa_base
 
 
 def main():
-    load_questions()
-    # wins = 0
-    # name = input('Enter your name => ')
-    # questions_num = int(input('Enter how many questions do you like to get => '))
-    # complexity = 1
+    wins = 0
+    name = input('Enter your name => ')
+    questions_num = int(input('Enter how many questions do you like to get => '))
+    complexity = int(input('Enter the difficulty from 1 to 3 (easy/medium/hard) => '))
     # for _ in range(questions_num):
     #     question = load_question(complexity=complexity)
     #     print(f'DIFFICULTY : {question.get_complexity(complexity)}')
