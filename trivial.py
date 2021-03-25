@@ -1,10 +1,10 @@
 import time
 import requests
 import random
-import json
-from types import SimpleNamespace
-from html.parser import HTMLParser
 import html
+from googletrans import Translator
+
+translator = Translator()
 
 
 class Question:
@@ -12,12 +12,16 @@ class Question:
     def __init__(self, **entries):
         self.__dict__.update(entries)
 
-    def show(self):
-        print('\n', html.unescape(getattr(self, 'question')), end='\n\n')
+    def show(self, need_translate=False):
+        header = html.unescape(getattr(self, 'question'))
+        if need_translate: header = translator.translate(header, 'ru').text
+        print('\n', header, end='\n\n')
         time.sleep(1)
         random.shuffle(answers := [getattr(self, 'correct_answer')] + getattr(self, 'incorrect_answers'))
         for index, answer in enumerate(answers, 1):
-            print(f'\n{index}. {html.unescape(answer)}')
+            answer = html.unescape(answer)
+            if need_translate: answer = translator.translate(answer, 'ru').text
+            print(f'\n{index}. {answer}')
         print()
         return len(answers), answers.index(self.get_correct_answer()) + 1
 
@@ -48,9 +52,13 @@ def main():
     name = input('Enter your name => ')
     questions_num = int(input('Enter how many questions do you like to get => '))
     cur_difficulty = difficulty[int(input('Enter the difficulty from 1 to 3 (easy/medium/hard) => ')) - 1]
+    if input('Do you need to translate ? y/n ').lower() == 'y':
+        need_translate = True
+    else:
+        need_translate = False
     questions = load_questions(difficulty=cur_difficulty, amount=questions_num)
     for question in questions:
-        ans_count, correct_number = question.show()
+        ans_count, correct_number = question.show(need_translate=need_translate)
         while True:
             user_answer = int(input('Enter your answer => '))
             if user_answer in range(1, ans_count + 1):
@@ -61,7 +69,11 @@ def main():
             wins += 1
         else:
             print(f'\n{name} OOPS! You FAIL.\n')
-
+            if need_translate:
+                help_str = translator.translate(question.get_correct_answer(), 'ru').text
+            else:
+                help_str = question.get_correct_answer()
+            print(f'Correct answer is: {help_str}')
     print(f'{name} - You win {wins} points and that is {round(wins / questions_num * 100)} %')
 
 
