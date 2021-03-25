@@ -33,21 +33,25 @@ class Question:
 
 
 class Game:
-    pass
+    difficulty = ['easy', 'medium', 'hard']
 
+    def __init__(self, amount=5, category=None, difficulty=None):
+        self.amount = amount
+        self.category = category
+        self.difficulty = difficulty
 
-def load_questions(amount=5, category=None, difficulty=None):
-    api_url = 'https://opentdb.com/api.php?amount=10&category=9'
-    params = {
-        'amount': amount,
-        'category': category,
-        'difficulty': difficulty,
-    }
-    response = requests.get(api_url, params=params)
-    qa_base = []
-    for record in response.json().get('results'):
-        qa_base.append(Question(**record))
-    return qa_base
+    def load_questions(self):
+        api_url = 'https://opentdb.com/api.php'
+        params = {
+            'amount': self.amount,
+            'category': self.category,
+            'difficulty': self.difficulty,
+        }
+        response = requests.get(api_url, params=params)
+        qa_base = []
+        for record in response.json().get('results'):
+            qa_base.append(Question(**record))
+        return qa_base
 
 
 def main():
