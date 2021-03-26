@@ -33,12 +33,12 @@ class Question:
 
 
 class Game:
-    difficulty = ['easy', 'medium', 'hard']
+    difficulty_range = ['easy', 'medium', 'hard']
 
     def __init__(self, amount=5, category=None, difficulty=None):
         self.amount = amount
         self.category = category
-        self.difficulty = difficulty
+        self.difficulty = self.difficulty_range[difficulty]
 
     def load_questions(self):
         api_url = 'https://opentdb.com/api.php'
@@ -53,6 +53,9 @@ class Game:
             qa_base.append(Question(**record))
         return qa_base
 
+    def run(self):
+        pass
+
 
 def main():
     difficulty = ['easy', 'medium', 'hard']
@@ -64,7 +67,8 @@ def main():
         need_translate = True
     else:
         need_translate = False
-    questions = load_questions(difficulty=cur_difficulty, amount=questions_num)
+    game = Game(amount=questions_num, difficulty=cur_difficulty)
+
     for question in questions:
         ans_count, correct_number = question.show(need_translate=need_translate)
         while True:
