@@ -69,7 +69,7 @@ def main():
         need_translate = False
     game = Game(amount=questions_num, difficulty=cur_difficulty)
 
-    for question in questions:
+    for question in questions:
         ans_count, correct_number = question.show(need_translate=need_translate)
         while True:
             user_answer = int(input('Enter your answer => '))
