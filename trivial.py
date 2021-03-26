@@ -61,7 +61,23 @@ class Game:
         return qa_base
 
     def run(self):
-        pass
+        for question in questions:
+            ans_count, correct_number = question.show(need_translate=need_translate)
+            while True:
+                user_answer = int(input('Enter your answer => '))
+                if user_answer in range(1, ans_count + 1):
+                    break
+
+            if user_answer == correct_number:
+                print(f'\n{name} fine! Correct answer.\n')
+                wins += 1
+            else:
+                print(f'\n{name} OOPS! You FAIL.\n')
+                if need_translate:
+                    help_str = translator.translate(question.get_correct_answer(), 'ru').text
+                else:
+                    help_str = question.get_correct_answer()
+                print(f'Correct answer is: {help_str}')
 
 
 def main():
@@ -73,25 +89,8 @@ def main():
         need_translate = True
     else:
         need_translate = False
-    game = Game(amount=questions_num, difficulty=cur_difficulty)
+    game = Game(user=user, amount=questions_num, difficulty=cur_difficulty)
 
-    for question in questions:
-        ans_count, correct_number = question.show(need_translate=need_translate)
-        while True:
-            user_answer = int(input('Enter your answer => '))
-            if user_answer in range(1, ans_count + 1):
-                break
-
-        if user_answer == correct_number:
-            print(f'\n{name} fine! Correct answer.\n')
-            wins += 1
-        else:
-            print(f'\n{name} OOPS! You FAIL.\n')
-            if need_translate:
-                help_str = translator.translate(question.get_correct_answer(), 'ru').text
-            else:
-                help_str = question.get_correct_answer()
-            print(f'Correct answer is: {help_str}')
     print(f'{name} - You win {wins} points and that is {round(wins / questions_num * 100)} %')
 
 
