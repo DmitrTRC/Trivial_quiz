@@ -50,10 +50,8 @@ class Game:
             'difficulty': self.difficulty,
         }
         response = requests.get(api_url, params=params)
-        qa_base = []
         for record in response.json().get('results'):
-            qa_base.append(Question(**record))
-        return qa_base
+            yield Question(**record)
 
     def show_results(self):
         print(f'{self.user.user_name} - You win {self.user.wins} points and that is'
@@ -76,7 +74,6 @@ class Game:
 
 
 def main():
-
     user = User(user_name=input('Enter your name => '))
     questions_num = int(input('Enter how many questions do you like to get => '))
     cur_difficulty = int(input('Enter the difficulty from 1 to 3 (easy/medium/hard ) => ')) - 1
