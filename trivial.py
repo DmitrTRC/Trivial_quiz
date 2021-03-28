@@ -2,6 +2,7 @@ import time
 import requests
 import random
 import html
+import rich
 
 
 class Question:
@@ -9,7 +10,7 @@ class Question:
     def __init__(self, **entries):
         self.__dict__.update(entries)
 
-    def show(self, need_translate=False):
+    def show(self):
         header = html.unescape(getattr(self, 'question'))
         print('\n', header, end='\n\n')
         time.sleep(1)
