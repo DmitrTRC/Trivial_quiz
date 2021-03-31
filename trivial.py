@@ -5,11 +5,14 @@ import html
 from rich.panel import Panel
 from rich import print
 from rich.console import Console
+import pyfiglet
 
 console = Console()
 
 
 # console.print("[bold yellow]Hello world")
+
+
 # print(Panel.fit("[bold yellow]Hi, I'm a Panel", border_style="red"))
 
 
@@ -50,6 +53,12 @@ class Game:
         self.category = category
         self.difficulty = self.difficulty_range[difficulty]
         self.user = user
+        self._show_banner()
+
+    @staticmethod
+    def _show_banner():
+        ascii_banner = pyfiglet.figlet_format("QIUZ GAME")
+        console.print('Banner message')
 
     def load_questions(self):
         api_url = 'https://opentdb.com/api.php'
