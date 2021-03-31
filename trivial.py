@@ -6,7 +6,9 @@ from rich.panel import Panel
 from rich import print
 from rich.console import Console
 import pyfiglet
+from rich.traceback import install
 
+install()  # TRace back init
 console = Console()
 
 
