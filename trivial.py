@@ -55,10 +55,13 @@ class Game:
         self.user = user
         self._show_banner()
 
+    def login(self):
+        pass
+
     @staticmethod
     def _show_banner():
         ascii_banner = pyfiglet.figlet_format("QIUZ GAME")
-        console.print('Banner message')
+        console.print(ascii_banner)
 
     def load_questions(self):
         api_url = 'https://opentdb.com/api.php'
