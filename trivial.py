@@ -2,7 +2,15 @@ import time
 import requests
 import random
 import html
-import rich
+from rich.panel import Panel
+from rich import print
+from rich.console import Console
+
+console = Console()
+
+
+# console.print("[bold yellow]Hello world")
+# print(Panel.fit("[bold yellow]Hi, I'm a Panel", border_style="red"))
 
 
 class Question:
