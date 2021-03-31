@@ -53,15 +53,6 @@ class Game:
         self.category = category
         self.difficulty = self.difficulty_range[difficulty]
         self.user = user
-        self._show_banner()
-
-    def login(self):
-        pass
-
-    @staticmethod
-    def _show_banner():
-        ascii_banner = pyfiglet.figlet_format("QIUZ GAME")
-        console.print(ascii_banner)
 
     def load_questions(self):
         api_url = 'https://opentdb.com/api.php'
@@ -94,9 +85,15 @@ class Game:
                 print(f'Correct answer is: {question.get_correct_answer()}')
 
 
+def show_banner():
+    ascii_banner = pyfiglet.figlet_format("QIUZ GAME")
+    console.print(ascii_banner)
+
+
 def main():
-    user = User(user_name=input('Enter your name => '))
-    questions_num = int(input('Enter how many questions do you like to get => '))
+    show_banner()
+    user = User(user_name=input('Player\'s name => '))
+    questions_num = int(input('Enter how many questions would you like to get => '))
     cur_difficulty = int(input('Enter the difficulty from 1 to 3 (easy/medium/hard ) => ')) - 1
     game = Game(user=user, amount=questions_num, difficulty=cur_difficulty)
     game.run()
