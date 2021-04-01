@@ -6,7 +6,9 @@ from rich.panel import Panel
 from rich import print
 from rich.console import Console
 import pyfiglet
+from rich.traceback import install
 
+install()  # TRace back init
 console = Console()
 
 
@@ -23,7 +25,7 @@ class Question:
 
     def show(self):
         header = html.unescape(getattr(self, 'question'))
-        print('\n', header, end='\n\n')
+        console.print('\n', header, end='\n\n', style='bold yellow')
         time.sleep(1)
         random.shuffle(answers := [getattr(self, 'correct_answer')] + getattr(self, 'incorrect_answers'))
         for index, answer in enumerate(answers, 1):
@@ -53,9 +55,6 @@ class Game:
         self.category = category
         self.difficulty = self.difficulty_range[difficulty]
         self.user = user
-
-    def func_mater(self):
-        print('The cab version')
 
     def load_questions(self):
         api_url = 'https://opentdb.com/api.php'
