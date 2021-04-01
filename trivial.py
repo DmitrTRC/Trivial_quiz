@@ -54,6 +54,9 @@ class Game:
         self.difficulty = self.difficulty_range[difficulty]
         self.user = user
 
+    def func_mater(self):
+        print('The cab version')
+
     def load_questions(self):
         api_url = 'https://opentdb.com/api.php'
         params = {
