@@ -25,7 +25,7 @@ class Question:
 
     def show(self):
         header = html.unescape(getattr(self, 'question'))
-        print('\n', header, end='\n\n')
+        console.print('\n', header, end='\n\n', style='bold yellow')
         time.sleep(1)
         random.shuffle(answers := [getattr(self, 'correct_answer')] + getattr(self, 'incorrect_answers'))
         for index, answer in enumerate(answers, 1):
@@ -55,6 +55,9 @@ class Game:
         self.category = category
         self.difficulty = self.difficulty_range[difficulty]
         self.user = user
+
+    def func_master(self):
+        console.print(f'Written on MINI!')
 
     def load_questions(self):
         api_url = 'https://opentdb.com/api.php'
