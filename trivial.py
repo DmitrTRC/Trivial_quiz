@@ -25,7 +25,8 @@ class Question:
 
     def show(self):
         header = html.unescape(getattr(self, 'question'))
-        console.print('\n', header, end='\n\n', style='bold yellow')
+        print(Panel.fit(f'[bold green] {header}', border_style="red"))
+        # console.print('\n', header, end='\n\n', style='bold yellow')
         time.sleep(1)
         random.shuffle(answers := [getattr(self, 'correct_answer')] + getattr(self, 'incorrect_answers'))
         for index, answer in enumerate(answers, 1):
