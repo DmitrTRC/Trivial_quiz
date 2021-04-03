@@ -93,6 +93,11 @@ def show_banner():
     console.print(ascii_banner)
 
 
+def bye_banner():
+    banner = pyfiglet.figlet_format('Bye!')
+    console.print(banner)
+
+
 def main():
     show_banner()
     user = User(user_name=input('Player\'s name => '))
@@ -101,6 +106,7 @@ def main():
     game = Game(user=user, amount=questions_num, difficulty=cur_difficulty)
     game.run()
     game.show_results()
+    bye_banner()
 
 
 if __name__ == '__main__':
