@@ -2,9 +2,6 @@ import time
 import requests
 import random
 import html
-from googletrans import Translator
-
-translator = Translator()
 
 
 class Question:
@@ -14,13 +11,11 @@ class Question:
 
     def show(self, need_translate=False):
         header = html.unescape(getattr(self, 'question'))
-        if need_translate: header = translator.translate(header, 'ru').text
         print('\n', header, end='\n\n')
         time.sleep(1)
         random.shuffle(answers := [getattr(self, 'correct_answer')] + getattr(self, 'incorrect_answers'))
         for index, answer in enumerate(answers, 1):
             answer = html.unescape(answer)
-            if need_translate: answer = translator.translate(answer, 'ru').text
             print(f'\n{index}. {answer}')
         print()
         return len(answers), answers.index(self.get_correct_answer()) + 1
@@ -32,13 +27,20 @@ class Question:
         return str(self.__dict__)
 
 
+class User:
+    def __init__(self, user_name='Ghost', wins=0):
+        self.user_name = user_name
+        self.wins = wins
+
+
 class Game:
     difficulty_range = ['easy', 'medium', 'hard']
 
-    def __init__(self, amount=5, category=None, difficulty=None):
+    def __init__(self, user: User, amount=5, category=None, difficulty=None):
         self.amount = amount
         self.category = category
         self.difficulty = self.difficulty_range[difficulty]
+        self.user = user
 
     def load_questions(self):
         api_url = 'https://opentdb.com/api.php'
@@ -53,40 +55,34 @@ class Game:
             qa_base.append(Question(**record))
         return qa_base
 
+    def show_results(self):
+        print(f'{self.user.user_name} - You win {self.user.wins} points and that is'
+              f' {round(self.user.wins / self.amount * 100)} %')
+
     def run(self):
-        pass
+        for question in self.load_questions():
+            ans_count, correct_number = question.show()
+            while True:
+                user_answer = int(input('Enter your answer => '))
+                if user_answer in range(1, ans_count + 1):
+                    break
+
+            if user_answer == correct_number:
+                print(f'\n{self.user.user_name} fine! Correct answer.\n')
+                self.user.wins += 1
+            else:
+                print(f'\n{self.user.user_name} OOPS! You FAIL.\n')
+                print(f'Correct answer is: {question.get_correct_answer()}')
 
 
 def main():
-    difficulty = ['easy', 'medium', 'hard']
-    wins = 0
-    name = input('Enter your name => ')
+
+    user = User(user_name=input('Enter your name => '))
     questions_num = int(input('Enter how many questions do you like to get => '))
-    cur_difficulty = difficulty[int(input('Enter the difficulty from 1 to 3 (easy/medium/hard ) => ')) - 1]
-    if input('Do you need to translate ? y/n ').lower() == 'y':
-        need_translate = True
-    else:
-        need_translate = False
-    game = Game(amount=questions_num, difficulty=cur_difficulty)
-
-    for question in questions:
-        ans_count, correct_number = question.show(need_translate=need_translate)
-        while True:
-            user_answer = int(input('Enter your answer => '))
-            if user_answer in range(1, ans_count + 1):
-                break
-
-        if user_answer == correct_number:
-            print(f'\n{name} fine! Correct answer.\n')
-            wins += 1
-        else:
-            print(f'\n{name} OOPS! You FAIL.\n')
-            if need_translate:
-                help_str = translator.translate(question.get_correct_answer(), 'ru').text
-            else:
-                help_str = question.get_correct_answer()
-            print(f'Correct answer is: {help_str}')
-    print(f'{name} - You win {wins} points and that is {round(wins / questions_num * 100)} %')
+    cur_difficulty = int(input('Enter the difficulty from 1 to 3 (easy/medium/hard ) => ')) - 1
+    game = Game(user=user, amount=questions_num, difficulty=cur_difficulty)
+    game.run()
+    game.show_results()
 
 
 if __name__ == '__main__':
