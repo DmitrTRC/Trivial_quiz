@@ -2,6 +2,20 @@ import time
 import requests
 import random
 import html
+from rich.panel import Panel
+from rich import print
+from rich.console import Console
+import pyfiglet
+from rich.traceback import install
+
+install()  # TRace back init
+console = Console()
+
+
+# console.print("[bold yellow]Hello world")
+
+
+# print(Panel.fit("[bold yellow]Hi, I'm a Panel", border_style="red"))
 
 
 class Question:
@@ -9,9 +23,10 @@ class Question:
     def __init__(self, **entries):
         self.__dict__.update(entries)
 
-    def show(self, need_translate=False):
+    def show(self):
         header = html.unescape(getattr(self, 'question'))
-        print('\n', header, end='\n\n')
+        print(Panel.fit(f'[bold green] {header}', border_style="red"))
+        # console.print('\n', header, end='\n\n', style='bold yellow')
         time.sleep(1)
         random.shuffle(answers := [getattr(self, 'correct_answer')] + getattr(self, 'incorrect_answers'))
         for index, answer in enumerate(answers, 1):
@@ -50,10 +65,8 @@ class Game:
             'difficulty': self.difficulty,
         }
         response = requests.get(api_url, params=params)
-        qa_base = []
         for record in response.json().get('results'):
-            qa_base.append(Question(**record))
-        return qa_base
+            yield Question(**record)
 
     def show_results(self):
         print(f'{self.user.user_name} - You win {self.user.wins} points and that is'
@@ -75,14 +88,25 @@ class Game:
                 print(f'Correct answer is: {question.get_correct_answer()}')
 
 
-def main():
+def show_banner():
+    ascii_banner = pyfiglet.figlet_format("QIUZ GAME")
+    console.print(ascii_banner)
 
-    user = User(user_name=input('Enter your name => '))
-    questions_num = int(input('Enter how many questions do you like to get => '))
+
+def bye_banner():
+    banner = pyfiglet.figlet_format('Bye!')
+    console.print(banner)
+
+
+def main():
+    show_banner()
+    user = User(user_name=input('Player\'s name => '))
+    questions_num = int(input('Enter how many questions would you like to get => '))
     cur_difficulty = int(input('Enter the difficulty from 1 to 3 (easy/medium/hard ) => ')) - 1
     game = Game(user=user, amount=questions_num, difficulty=cur_difficulty)
     game.run()
     game.show_results()
+    bye_banner()
 
 
 if __name__ == '__main__':
